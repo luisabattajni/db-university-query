@@ -1,4 +1,4 @@
--- esercizio 15 dicembre 
+-- esercizio 15 dicembre
 
 
 -- * Selezionare tutti gli studenti nati nel 1990 
@@ -21,7 +21,7 @@ SELECT COUNT(*) as numero_dipartimenti FROM departments;
 SELECT COUNT(*) as numero_insegnanti_senza_telefono FROM teachers WHERE phone IS NULL;
 
 -- * Contare quanti iscritti ci sono stati ogni anno
-SELECT YEAR(enrolment_date) as year_of_enrolment, COUNT(id) as numero_studenti 
+SELECT YEAR(enrolment_date) as year_of_enrolment, COUNT(id) as numero_studenti
 FROM students
 GROUP BY YEAR(enrolment_date)
 ORDER BY year_of_enrolment;
@@ -36,13 +36,13 @@ GROUP BY e.id;
 
 -- 9. * Contare quanti corsi di laurea ci sono per ogni dipartimento
 SELECT d2.name, COUNT(d.id) as numero_corsidilaurea
-FROM `degrees` d 
+FROM `degrees` d
 INNER JOIN departments d2 ON d.department_id = d2.id
 GROUP BY d2.id;
 
 -- 10. Selezionare tutti gli studenti iscritti al Corso di Laurea in Economia
-SELECT * 
-FROM students 
+SELECT *
+FROM students
 INNER JOIN `degrees` d ON students.degree_id = d.id
 WHERE d.name = 'Corso di Laurea in Economia';
 
@@ -54,16 +54,26 @@ WHERE d.`level` = 'magistrale' AND d2.name = 'Dipartimento di Neuroscienze';
 
 -- 12. * Selezionare tutti i corsi in cui insegna Fulvio Amato
 SELECT *
-FROM courses c 
-INNER JOIN course_teacher ct ON c.id = ct.course_id 
-INNER JOIN teachers t ON t.id = ct.teacher_id 
+FROM courses c
+INNER JOIN course_teacher ct ON c.id = ct.course_id
+INNER JOIN teachers t ON t.id = ct.teacher_id
 WHERE t.name = 'Fulvio' AND t.surname = 'Amato';
 
--- 13. * Selezionare tutti gli studenti con i dati relativi al corso di laurea a cui sono 
+-- 13. * Selezionare tutti gli studenti con i dati relativi al corso di laurea a cui sono
 -- iscritti e il relativo dipartimento, in ordine alfabetico per cognome e nome
 SELECT *
-FROM students s 
-INNER JOIN `degrees` d ON d.id = s.degree_id 
-INNER JOIN departments d2 ON d2.id = d.department_id 
+FROM students s
+INNER JOIN `degrees` d ON d.id = s.degree_id
+INNER JOIN departments d2 ON d2.id = d.department_id
 ORDER BY s.surname, s.name;
 
+-- Selezionare per ogni studente quanti tentativi d’esame ha sostenuto per
+-- superare ciascuno dei suoi esami
+
+-- non riesco a sommare n prove dello stesso esame
+SELECT s.id, s.name, e.course_id , COUNT(es.exam_id) as n_prove
+FROM students s
+INNER JOIN exam_student es ON s.id = es.student_id
+INNER JOIN exams e ON e.id = es.exam_id
+WHERE s.id = es.student_id AND e.id = es.exam_id
+GROUP BY e.id, s.id;
